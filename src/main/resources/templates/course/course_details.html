@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header"></div>
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+
+    <div class="main_contents">
+        <div th:replace="fragments/sidenav :: sidenav"></div>
+        <div id="sub_content">
+            <form method="get" action="searchCourse" class="row g-3 mt-3 ms-2">
+                <div class="col-auto">
+                    <label for="staticEmail2"  class="visually-hidden">ID</label>
+                    <input type="text" name="courseId" class="form-control" id="staticEmail2"  placeholder="Course ID">
+                </div>
+                <div class="col-auto">
+                    <label  for="name" class="visually-hidden">Name</label>
+                    <input name="name" type="text" class="form-control" id="name"  placeholder="Course Name">
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-3 me-3">
+                        Search
+                    </button>
+                </div>
+
+                <div class="col-auto">
+                    <a href="courseRegister" class="btn btn-secondary">Add</a>
+                </div>
+
+                <div class="col-auto">
+                    <a href="courseDetails" class="btn btn-danger">Reset</a>
+                </div>
+
+            </form>
+            <th:block th:if="${error != null}">
+                <h5 style="color: red" th:text="${error}"></h5>
+            </th:block>
+            <table class="table table-success table-striped" id="stduentTable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col"> Id</th>
+                    <th scope="col"> Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Delete</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <th:block th:if="${error == null}">
+                    <th:block th:each="course, iterStat : ${courses}">
+                <tr>
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${course.id}"></td>
+                <td th:text="${course.name}"></td>
+                <td th:text="${course.description}"></td>
+                <td th:text="${course.instructor}"></td>
+                <td>
+                    <a th:href="@{'/course/changeStatus?courseId=' + ${course.id}}">
+                        <span th:class="${course.status != null && course.status.equalsIgnoreCase('pending')} ? 'badge text-bg-warning' : 'badge text-bg-info'" th:text="${course.status}"></span>
+                    </a>
+                </td>
+                <td><a th:href="@{'/course/updateCourse?courseId=' + ${course.id}}" class="btn btn-warning">Update</a></td>
+                <td><a th:href="@{'/course/deleteCourse?courseId=' + ${course.id}}"><i class="fa-solid fa-trash"></i></a></td>
+            </tr>
+                    </th:block>
+                </th:block>
+            </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+<script>
+    let userIdToDelete;
+
+    function setUserId(userId) {
+        userIdToDelete = userId;
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (userIdToDelete) {
+            let deleteUrl = 'deleteUser?userId=' + userIdToDelete;
+            window.location.href = deleteUrl;
+        }
+    });
+</script>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+
+</html>

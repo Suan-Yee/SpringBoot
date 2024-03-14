@@ -1,0 +1,21 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div id="testheader" th:fragment="log">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 ">
+                <a href="MNU001.html"><h3>Student Registration</h3></a>
+            </div>
+            <div class="col-md-6">
+                <div sec:authentication="name"></div>
+                <!--<p th:text="${#authentication.principal.email}">UserName</p>-->
+               <!-- <p th:text="${#dates.format(#dates.createNow(), 'yy.MM.dd')}">Current Date :</p>-->
+            </div>
+            <div class="col-md-1" >
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

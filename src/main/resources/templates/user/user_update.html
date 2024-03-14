@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header"></div>
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+    <div th:replace="fragments/sidenav :: sidenav"></div>
+<div class="main_contents">
+    <div id="sub_content">
+        <form method="post" th:object="${user}" th:action="@{/user/updateUserAction}">
+
+            <h2 class="col-md-6 offset-md-2 mb-5 mt-4">User Update</h2>
+            <h2 class="col-md-6 offset-md-2 mb-5 mt-4"></h2>
+            <div class="row mb-4">
+                <div class="col-md-2"></div>
+                <label for="id" class="col-md-2 col-form-label">ID</label>
+                <div class="col-md-4">
+                    <input type="text" id="id" th:field="*{formattedId}"  class="form-control" disabled>
+                    <input type="hidden" th:field="*{id}">
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-2"></div>
+                <label for="name" class="col-md-2 col-form-label">Name</label>
+                <div class="col-md-4">
+                    <input type="text" th:field="*{username}" class="form-control" name="name" id="name">
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-2"></div>
+                <label for="email" class="col-md-2 col-form-label">Email</label>
+                <div class="col-md-4">
+                    <input type="email" th:field="*{email}" class="form-control" name="email" disabled id="email">
+                    <a th:href="@{/user/checkEmail}" style="margin-top: 20px" type="button" class="btn btn-dark" >Change Email</a>
+                    <!--onclick="setUserId(${user.id})"-->
+                </div>
+            </div>
+            <input type="hidden" name="id"/>
+
+            <div class="row mb-4">
+                <div class="col-md-4"></div>
+
+                <div class="col-md-6">
+
+                    <button type="submit" class="btn btn-success col-md-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Update</button>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">User Update</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <h5 style="color: rgb(127, 209, 131);">Successfully Updated !</h5>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success col-md-2" data-bs-dismiss="modal">Ok</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="userList" class="btn btn-secondary col-md-2" >Back</a>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+<script>
+    function setUserId(userId){
+        userIdToDelete = userId;
+
+        if (userIdToDelete) {
+            let deleteUrl = 'changeEmail?userId=' + userIdToDelete;
+            window.location.href = deleteUrl;
+        }
+    }
+
+</script>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+
+</html>

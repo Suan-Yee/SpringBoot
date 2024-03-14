@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <div th:replace="fragments/header :: header"></div>
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+  <div th:replace="fragments/sidenav :: sidenav"></div>
+  <div class="main_contents">
+    <div id="sub_content">
+      <form method="post" th:object="${user}" th:action="@{/user/register}">
+
+        <h2 class="col-md-6 offset-md-2 mb-5 mt-4">User Registration</h2>
+        <h1 class="col-md-6 offset-md-2 mb-5 mt-4" style="color:red"></h1>
+        <div class="row mb-4">
+          <div class="col-md-2"></div>
+          <label for="name"  class="col-md-2 col-form-label" >Name</label>
+          <div class="col-md-4">
+            <input type="text" th:field="*{username}"  class="form-control" id="name" placeholder="Please enter your name">
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-md-2"></div>
+          <label  for="email" class="col-md-2 col-form-label">Email</label>
+          <div class="col-md-4">
+            <input type="email" th:field="*{email}"  class="form-control" id="email" placeholder="Please enter your email">
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-md-2"></div>
+          <label  for="password" class="col-md-2 col-form-label">Password</label>
+          <div class="col-md-4">
+            <input type="password" th:field="*{password}" name="password" class="form-control" id="password" placeholder="Please enter your password">
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-md-2"></div>
+          <label  for="confirmPassword"  class="col-md-2 col-form-label">Confirm Password</label>
+          <div class="col-md-4">
+            <input  type="password"  name="confirmPass" class="form-control" id="confirmPassword" placeholder="Please enter your confirmPassword">
+          </div>
+        </div>
+        <!-- <div class="row mb-4">
+        <div class="col-md-2"></div>
+        <label for="userRole" class="col-md-2 col-form-label">User Role</label>
+        <div class="col-md-4">
+        <select class="form-select" name="role" aria-label="User Role" id="userRole">
+        <option selected value="Admin">Admin</option>
+        <option value="User">User</option>
+        </select>
+        </div>
+        </div> -->
+        <div class="row mb-4">
+          <div class="col-md-4"></div>
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-secondary col-md-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Create</button>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-md-4"></div>
+          <div class="col-md-6">
+            <a href="userList" class="btn btn-secondary col-md-2">Back</a>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+  <dialog id="errorDialog">
+    <div>
+      <p>Error: <span th:text="${error}"></span></p>
+      <button id="closeDialogBtn">Close</button>
+    </div>
+  </dialog>
+</div>
+
+<script th:inline="javascript">
+
+  var error = /*[[${error}]]*/ null;
+
+  if (error !== null && error !== '') {
+    const errorDialog = document.getElementById('errorDialog');
+    errorDialog.showModal();
+    const closeDialogBtn = document.getElementById('closeDialogBtn');
+    closeDialogBtn.addEventListener('click', () => {
+      errorDialog.close();
+    });
+  }
+  /*]]>*/
+</script>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+
+</html>

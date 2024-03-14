@@ -1,0 +1,24 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="sidenav" th:fragment="sidenav">
+
+    <button class="dropdown-btn" > Class Management <i class="fa fa-caret-down"></i></button>
+
+    <div class="dropdown-container">
+        <a th:href="@{/student/studentRegistration}">Student Registration </a>
+        <a th:href="@{/student/studentDetails}">Student Search </a>
+    </div>
+
+    <button class="dropdown-btn" > Course Management <i class="fa fa-caret-down"></i></button>
+    <div class="dropdown-container">
+        <a th:href="@{/course/courseRegistration}">Course Registration </a>
+        <a th:href="@{/course/courseList}">Course Details </a>
+    </div>
+
+
+    <a th:href="@{/instructor/instructorReg}">Instructor Registration </a>
+
+    <a th:href="@{/user/userList}">Users Management</a>
+
+
+</div>
+</html>

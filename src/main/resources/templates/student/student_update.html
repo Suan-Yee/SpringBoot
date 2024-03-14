@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header"></div>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/form.css}">
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+    <div th:replace="fragments/sidenav :: sidenav"></div>
+
+    <div class="main_contents">
+        <div id="sub_content">
+            <form method="post" th:action="@{/student/updateStudent}" th:object="${student}" id="form-ad">
+
+                <h2 class="col-md-6 offset-md-2 mb-5 mt-4">Student Update</h2>
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label  for="studentID" class="col-md-2 col-form-label">Student
+                        ID</label>
+                    <div class="col-md-5">
+                        <input type="text" th:field="*{student.formattedId}" class="form-control"
+                                id="studentID" disabled/>
+                    </div>
+                    <input type="hidden" th:field="*{student.id}"/>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label for="name" class="col-md-2 col-form-label">Name</label>
+                    <div class="col-md-5 input-control">
+                        <input th:field="*{student.name}" type="text" class="form-control"  id="name">
+                        <div class="error"></div>
+                    </div>
+
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label for="dob" class="col-md-2 col-form-label">DOB</label>
+                    <div class="col-md-5 input-control">
+                        <input th:field="*{student.dob}" type="date" name="dob" class="form-control" id="dob">
+                    </div>
+                </div>
+
+                <fieldset class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <legend class="col-form-label col-md-2 pt-0">Gender</legend>
+                    <div class="col-md-5">
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender"
+                                   id="gridRadios1" value="Male" th:field="*{student.gender}" th:checked="${test.gender == 'Male'}"/>
+                            <label class="form-check-label"
+                                   for="gridRadios1"> Male </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender"
+                                   id="gridRadios2" value="Female" th:field="*{student.gender}" th:checked="${test.gender == 'Female'}"/>
+                            <label class="form-check-label"
+                                   for="gridRadios2"> Female </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label for="education" class="col-md-2 col-form-label">Education</label>
+                    <div class="col-md-5">
+                        <select th:field="*{student.education}" class="form-select" aria-label="Education" id="education"
+                                name="education">
+                            <option value="Bachelor of Information Technology" th:selected="${test.education == 'Bachelor of Information Technology'}">Bachelor of Information Technology</option>
+                            <option value="Diploma in IT" th:selected="${test.education == 'Diploma in IT'}">Diploma in IT</option>
+                            <option value="Bachelor of Computer Science" th:selected="${test.education == 'Bachelor of Computer Science'}">Bachelor of Computer Science</option>
+                        </select>
+                    </div>
+
+                    <fieldset class="row mb-5">
+                        <div class="col-md-2"></div>
+                        <legend class="col-form-label col-md-2 pt-0">Attend</legend>
+                        <div class="col-md-5">
+                            <div th:each="course : ${courses}">
+                                <div class="form-check-inline col-md-2">
+                                    <input class="form-check-input" th:id="${'course_'+course.id}" th:name="'courses'" th:checked="${check.contains(course)}"  type="checkbox" th:field="*{selectedCourses}" th:value="${course.id}"  />
+                                    <label class="form-check-label" th:text="${course.name}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="row mb-4">
+                        <div class="col-md-2"></div>
+
+                        <label for="phone" class="col-md-2 col-form-label">Phone</label>
+                        <div class="col-md-5 input-control">
+                            <div id="error" style="color: red;"></div>
+                            <input th:field="*{student.phone}" type="text"  class="form-control" id="phone"
+                                        placeholder="Please enter your phone number" maxlength="11">
+                            <div class="error"></div>
+                        </div>
+                    </div>
+
+                   <!-- <div class="row mb-4">
+                        <div class="col-md-2"></div>
+                        <img src="/images/${student.imageUrl}" id="profileImage" class=" profile-image" alt="User-Profile-Image">
+                        <div class="col-md-4">
+                            <input type="file"  class="form-control" name="file" id="fileInput"
+                                        accept="image/*" multiple="true">
+                        </div>
+                    </div>-->
+
+                    <div class="row mb-4">
+                        <div class="col-md-4"></div>
+
+                        <div class="col-md-4">
+                            <button type="submit" id="submit-btn" class="btn btn-success">
+                                Update</button>
+
+                            <a type="button" class="btn btn-danger" th:href="@{/student/studentDetails}">Cancel
+                            </a>
+
+                        </div>
+
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+
+    .profile-image {
+        width: 125px;
+        height: 125px;
+        object-fit: cover;
+        display: block;
+        border-radius: 50%;
+    }
+</style>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-ad');
+        const username = document.getElementById('name');
+        const phone = document.getElementById('phone');
+
+        form.addEventListener('submit', function(event){
+            if(!validateInputs()){
+                event.preventDefault();
+            }
+        });
+
+        const setError = function (element, message) {
+            const inputControl = element.parentElement;
+            const errorDisplay = inputControl.querySelector('.error');
+
+            errorDisplay.innerText = message;
+            inputControl.classList.add('error');
+            errorDisplay.classList.add('alert', 'alert-danger');
+            errorDisplay.classList.add('show');
+        };
+
+        const setSuccess = function (element) {
+            const inputControl = element.parentElement;
+            const errorDisplay = inputControl.querySelector('.error');
+
+            errorDisplay.innerText = '';
+            inputControl.classList.remove('error');
+            errorDisplay.classList.remove('alert', 'alert-danger');
+            errorDisplay.classList.remove('show');
+        };
+
+        const validateInputs = function () {
+            const usernameValue = username.value.trim();
+            const phoneValue = phone.value.trim();
+
+            if (usernameValue === '') {
+                setError(username, 'Username is required');
+            } else {
+                setSuccess(username);
+            }
+
+            if (phoneValue === '') {
+                setError(phone, 'Phone is required');
+            } else if (!/^\d{11}$/.test(phoneValue)) {
+                setError(phone, 'Phone must be 11 digits long');
+            } else {
+                setSuccess(phone);
+            }
+
+            return !document.querySelectorAll('.error.show').length;
+        };
+    });
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+        const profileImage = document.getElementById('profileImage');
+        const fileInput = e.target;
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                profileImage.src = e.target.result;
+            };
+
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    });
+</script>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+
+</html>

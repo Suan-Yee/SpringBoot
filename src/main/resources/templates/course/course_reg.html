@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header"></div>
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+    <div th:replace="fragments/sidenav :: sidenav"></div>
+    <div class="main_contents">
+        <div id="sub_content">
+            <form method="post" th:object="${course}" th:action="@{/course/courseRegistration}" id="form-ad" >
+
+                <h2 class="col-md-6 offset-md-2 mb-5 mt-4">Course Registration</h2>
+
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label for="name" class="col-md-2 col-form-label">Name</label>
+                    <div class="col-md-4 input-control">
+                        <input th:field="*{name}" type="text" class="form-control"  id="name" placeholder="Enter Course Name">
+                        <div class="error"></div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label for="description"  class="col-md-2 col-form-label">Description</label>
+                    <div class="col-md-4 input-control">
+                        <textarea th:field="*{description}" type="text" class="form-control"  id="description" placeholder="Description"></textarea>
+                        <div class="error"></div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-2"></div>
+                    <label for="instructor"  class="col-md-2 col-form-label">Instructor</label>
+                    <div class="col-md-4 input-control">
+                        <input  type="text" class="form-control"  id="instructor" placeholder="Instructor">
+                        <!--<if test="${not empty error}">
+                            <div class="error alert alert-danger"></div>
+                        </if>-->
+                        <div class="error"></div>
+
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6 offset-md-2">
+                        <button type="submit" class="btn btn-secondary col-md-2" id="openModalButton">Add</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-ad');
+        const name = document.getElementById('name');
+        const description = document.getElementById('description');
+        const instructor = document.getElementById('instructor');
+
+        form.addEventListener('submit', function(event){
+            if(!validateInputs()){
+                event.preventDefault();
+            }
+        });
+
+        const setError = function (element, message) {
+            const inputControl = element.parentElement;
+            const errorDisplay = inputControl.querySelector('.error');
+
+            errorDisplay.innerText = message;
+            inputControl.classList.add('error');
+            errorDisplay.classList.add('alert', 'alert-danger');
+            errorDisplay.classList.add('show');
+        };
+
+        const setSuccess = function (element) {
+            const inputControl = element.parentElement;
+            const errorDisplay = inputControl.querySelector('.error');
+
+            errorDisplay.innerText = '';
+            inputControl.classList.remove('error');
+            errorDisplay.classList.remove('alert', 'alert-danger');
+            errorDisplay.classList.remove('show');
+        };
+
+        const validateInputs = function () {
+            const nameValue = name.value.trim();
+            const descriptionValue = description.value.trim();
+
+            if (nameValue === '') {
+                setError(name, 'CourseName is required');
+            } else {
+                setSuccess(name);
+            }
+
+            if (descriptionValue === ''){
+                setError(description,'Description is required');
+            }else{
+                setSuccess(description);
+            }
+
+            return !document.querySelectorAll('.error.show').length;
+        };
+    });
+</script>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header"></div>
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+    <div th:replace="fragments/sidenav :: sidenav"></div>
+
+    <div class="main_contents">
+        <div id="sub_content">
+            <form method="get" th:action="@{/user/searchUser}" class="row g-3 mt-3 ms-2">
+                <div class="col-auto">
+                    <label for="staticEmail2" class="visually-hidden">User Id</label>
+                    <input type="text" class="form-control" name="userId" id="staticEmail2" placeholder="User ID">
+                </div>
+                <div class="col-auto">
+                    <label for="inputPassword2" class="visually-hidden">User Name</label>
+                    <input type="text" class="form-control" name="name" id="inputPassword2" placeholder="User Name">
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-3">Search</button>
+                </div>
+
+                <div class="col-auto">
+                    <a th:href="@{/user/register}" class="btn btn-secondary">Add</a>
+                </div>
+
+                <div class="col-auto">
+                    <a th:href="@{/user/userList}" class="btn btn-danger">Reset</a>
+                </div>
+
+            </form>
+
+            <th:block th:if="${errors != null}">
+                <h5 style="color: red" th:text="${errors}"></h5>
+            </th:block>
+            <table class="table table-success table-striped" id="stduentTable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">User ID</th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Delete</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <th:block th:if="${errors == null}">
+                    <th:block th:each="user, iterStat : ${users}">
+                        <tr>
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${user.formattedId}"></td>
+                            <td th:text="${user.username}"></td>
+                            <td th:text="${user.role}"></td>
+                            <td>
+                                <a th:href="@{'updateUser?userId=' + ${user.id}}">
+                                    <button type="button" class="btn btn-success mb-3 me-3">
+                                        Update
+                                    </button>
+                                </a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger mb-3"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                        th:attr="onclick='setStudentId(\'' + ${user.id} + '\')'">
+                                    DELETE
+                                </button>
+                            </td>
+                        </tr>
+                    </th:block>
+                </th:block>
+
+                </tbody>
+            </table>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">User Deletion</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h5 style="color: rgb(127, 209, 131);">Are you sure you want to delete this user?</h5>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="confirmDeleteBtn">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<script>
+    let studentIdToDelete;
+
+    function setStudentId(studentId) {
+        studentIdToDelete = studentId;
+    }
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (studentIdToDelete) {
+            let deleteUrl = 'deleteUser?userId=' + studentIdToDelete;
+            window.location.href = deleteUrl;
+        }
+    });
+</script>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+
+</html>

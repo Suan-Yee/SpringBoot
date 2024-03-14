@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <div th:replace="fragments/header :: header"></div>
+</head>
+
+<body>
+<div th:replace="fragments/log :: log"></div>
+<div class="container">
+  <div th:replace="fragments/sidenav :: sidenav"></div>
+  <div class="login-page">
+    <div class="form">
+      <div class="login">
+        <div class="login-header">
+          <p>  <span th:text="${error}"></span></p>
+          <form th:action="@{/user/checkEmail}" th:object="${user}" class="login-form" method="post">
+
+            <input th:field="*{email}" class="input-control" type="text"
+                   placeholder="Please enter your email" />
+            <input th:field="*{password}" class="input-control" type="password"
+                   placeholder="Please enter your Password" />
+
+            <button type="submit">Submit</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div th:replace="fragments/footer :: footer"></div>
+</div>
+</body>
+
+</html>
+l>
