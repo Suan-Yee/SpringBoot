@@ -9,6 +9,8 @@
                 <div sec:authentication="name"></div>
                 <!--<p th:text="${#authentication.principal.email}">UserName</p>-->
                <!-- <p th:text="${#dates.format(#dates.createNow(), 'yy.MM.dd')}">Current Date :</p>-->
+                <p>User Name: <span th:text="${#ctx.session.username}"></span></p>
+                <p>Current Date: <span th:text="${#ctx.session.datetime}"></span></p>
             </div>
             <div class="col-md-1" >
                 <form th:action="@{/logout}" method="post">

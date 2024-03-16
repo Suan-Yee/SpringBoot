@@ -24,7 +24,7 @@
                         <input type="text" th:field="*{student.formattedId}" class="form-control"
                                 id="studentID" disabled/>
                     </div>
-                    <input type="hidden" th:field="*{student.id}"/>
+                    <input type="hidden"   th:field="*{student.id}"/>
                 </div>
                 <div class="row mb-4">
                     <div class="col-md-2"></div>
@@ -80,11 +80,16 @@
                         <div class="col-md-5">
                             <div th:each="course : ${courses}">
                                 <div class="form-check-inline col-md-2">
-                                    <input class="form-check-input" th:id="${'course_'+course.id}" th:name="'courses'" th:checked="${check.contains(course)}"  type="checkbox" th:field="*{selectedCourses}" th:value="${course.id}"  />
+                                    <input class="form-check-input"
+                                           th:id="${'course_'+course.id}" type="checkbox"
+                                           th:value="${course.id}"
+                                           th:name="'courses'"
+                                           th:checked="${test.courseList.contains(course.id)}">
                                     <label class="form-check-label" th:text="${course.name}"></label>
                                 </div>
                             </div>
                         </div>
+
                     </fieldset>
 
                     <div class="row mb-4">
@@ -203,7 +208,9 @@
             reader.readAsDataURL(fileInput.files[0]);
         }
     });
+
 </script>
+
 <div th:replace="fragments/footer :: footer"></div>
 </body>
 

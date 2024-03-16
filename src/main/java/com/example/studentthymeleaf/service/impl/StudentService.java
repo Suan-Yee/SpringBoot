@@ -6,9 +6,14 @@ import com.example.studentthymeleaf.entity.Enroll;
 import com.example.studentthymeleaf.entity.Student;
 import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +40,9 @@ public class StudentService {
     }
 
 
-    public List<Student> findAllStudent() {
-        List<Student> studentList = studentRepo.findAll();
+    public Page<Student> findAllStudent() {
+        Pageable pageable = PageRequest.of(0,5);
+        Page<Student> studentList = studentRepo.findAll(pageable);
         if(studentList.isEmpty()){
             return null;
         }
@@ -65,28 +71,33 @@ public class StudentService {
         }
         return false;
     }
-    public List<Student> findActiveStudent(){
-        return studentRepo.findByIsDeleteFalse().orElse(Collections.EMPTY_LIST);
+    public Page<Student> findActiveStudent() {
+        return findActiveStudent(0);
     }
-    public List<Student> searchStudent(Long id,String name,String course){
+    public Page<Student> findActiveStudent(int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber - 1,5);
+        return studentRepo.findByIsDeleteFalse(pageable).orElse(Page.empty());
+    }
+    public Page<Student> searchStudent(Long id, String name, String course) {
         List<Specification<Student>> specifications = new ArrayList<>();
         if (id != null) {
             specifications.add(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("id"),id)));
+                    criteriaBuilder.equal(root.get("id"), id)));
         }
-        if(StringUtils.hasLength(name)){
+        if (StringUtils.hasLength(name)) {
             specifications.add((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")),"%"
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%"
                             .concat(name.toLowerCase()).concat("%")));
         }
-        if(StringUtils.hasLength(course)){
+        if (StringUtils.hasLength(course)) {
             specifications.add(getCourse(course));
         }
         Specification<Student> studentSpecification = Specification.where(null);
-        for(Specification s: specifications){
+        for (Specification s : specifications) {
             studentSpecification = studentSpecification.and(s);
         }
-        return studentRepo.findAll(studentSpecification);
+        Pageable pageable = PageRequest.of(0,5);
+        return studentRepo.findAll(studentSpecification, pageable);
     }
     public static Specification<Student> getCourse(String name){
         return (root, query, criteriaBuilder) -> {

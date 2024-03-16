@@ -40,6 +40,32 @@
       <form action="generateReport" method="post">
         <button class="btn btn-danger mb-3" type="submit">Download Report(PDF)</button>
       </form>
+
+      <div style="color: darkgoldenrod; font-size: 16px;">Total Students: [[${totalElements}]]!  Page-> [[${currentPage}]] of [[${totalPages}]]</div>
+      <div style="display: flex; justify-content:space-around;">
+        <div></div>
+        <nav aria-label="Page navigation example" >
+          <ul class="pagination justify-content-end">
+            <li class="page-item" th:disabled="${currentPage == 1}">
+              <a th:if="${currentPage > 1}" th:href="@{'/student/studentDetails/' + ${currentPage - 1}}" class="page-link" >Previous</a>
+              <span th:unless="${currentPage > 1}" class="page-link" tabindex="-1">Previous</span>
+            </li>
+            <li class="page-item" th:if="${totalElements == 0}">
+              <a href="#" class="page-link">No student</a>
+            </li>
+            <p th:if="${totalPages > 1}">
+            <span th:each="i: ${#numbers.sequence(1,totalPages)}">
+            <li class="page-item"><a th:href="@{'/student/studentDetails/' + ${i}}" class="page-link">[[${i}]]</a></li>
+            </span>
+              </p>
+            <li class="page-item" th:disabled="${totalPages == currentPage}">
+              <a th:if="${currentPage < totalPages}" th:href="@{'/student/studentDetails/' + ${currentPage + 1}}"  class="page-link">Next</a>
+              <span th:unless="${currentPage < totalPages}" class="page-link">Next</span>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
       <div>
         <table class="table table-striped" id="stduentTable">
           <thead>
@@ -64,12 +90,13 @@
             <td th:text="${student.gender}"></td>
             <td th:text="${student.phone}"></td>
             <td>
-              <a th:href="@{'updateStudent?studentId=' + ${student.id}}">
+              <a th:href="@{'/student/updateStudent?studentId=' + ${student.id}}">
                 <button type="button" class="btn btn-success mb-3 me-3">
                   Update
                 </button>
               </a>
             </td>
+
             <td>
               <button type="button" class="btn btn-danger mb-3"
                       data-bs-toggle="modal" data-bs-target="#exampleModal"
@@ -77,8 +104,9 @@
                 DELETE
               </button>
             </td>
+
             <td>
-              <a th:href="@{'updateUser?userId=' + ${student.id}}">
+              <a th:href="@{'/student/studentProfile?studentId='+ ${student.id}}">
                 <i class="fa-solid fa-bars" style="font-size: 24px; color: black;"></i>
               </a>
             </td>
