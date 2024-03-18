@@ -13,7 +13,7 @@
 
     <div class="main_contents">
         <div id="sub_content">
-            <form method="post" th:action="@{/student/updateStudent}" th:object="${student}" id="form-ad">
+            <form method="post" th:action="@{/student/updateStudent}" th:object="${student}" id="form-ad" enctype="multipart/form-data">
 
                 <h2 class="col-md-6 offset-md-2 mb-5 mt-4">Student Update</h2>
                 <div class="row mb-4">
@@ -40,6 +40,7 @@
                     <label for="dob" class="col-md-2 col-form-label">DOB</label>
                     <div class="col-md-5 input-control">
                         <input th:field="*{student.dob}" type="date" name="dob" class="form-control" id="dob">
+                        <div class="error"></div>
                     </div>
                 </div>
 
@@ -104,14 +105,14 @@
                         </div>
                     </div>
 
-                   <!-- <div class="row mb-4">
+                    <div class="row mb-4">
                         <div class="col-md-2"></div>
-                        <img src="/images/${student.imageUrl}" id="profileImage" class=" profile-image" alt="User-Profile-Image">
+                        <img th:src="${test.getPhotosImagePath}"  id="profileImage" class=" profile-image" alt="User-Profile-Image">
                         <div class="col-md-4">
                             <input type="file"  class="form-control" name="file" id="fileInput"
                                         accept="image/*" multiple="true">
                         </div>
-                    </div>-->
+                    </div>
 
                     <div class="row mb-4">
                         <div class="col-md-4"></div>
@@ -159,7 +160,7 @@
 
             errorDisplay.innerText = message;
             inputControl.classList.add('error');
-            errorDisplay.classList.add('alert', 'alert-danger');
+            /*errorDisplay.classList.add('alert', 'alert-danger');*/
             errorDisplay.classList.add('show');
         };
 
@@ -169,7 +170,7 @@
 
             errorDisplay.innerText = '';
             inputControl.classList.remove('error');
-            errorDisplay.classList.remove('alert', 'alert-danger');
+            /*errorDisplay.classList.remove('alert', 'alert-danger');*/
             errorDisplay.classList.remove('show');
         };
 

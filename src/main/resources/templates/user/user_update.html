@@ -33,9 +33,10 @@
             <div class="row mb-4">
                 <div class="col-md-2"></div>
                 <label for="email" class="col-md-2 col-form-label">Email</label>
-                <div class="col-md-4">
+
+                <div class="col-md-4" >
                     <input type="email" th:field="*{email}" class="form-control" name="email" disabled id="email">
-                    <a th:href="@{/user/checkEmail}" style="margin-top: 20px" type="button" class="btn btn-dark" >Change Email</a>
+                    <a th:if="${session.email == user.email}" th:href="@{/user/checkEmail}" style="margin-top: 20px" type="button" class="btn btn-dark" >Change Email</a>
                     <!--onclick="setUserId(${user.id})"-->
                 </div>
             </div>

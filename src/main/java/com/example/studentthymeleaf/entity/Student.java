@@ -38,6 +38,11 @@ public class Student {
         this.formattedId = String.format("STR%03d", this.id);
     }
 
+    public String getPhotosImagePath(){
+        if(imageFile == null) return null;
+        return "/upload/" + imageFile;
+    }
+
     @PrePersist
     public void prePersist() {
         if (isDelete == null) {

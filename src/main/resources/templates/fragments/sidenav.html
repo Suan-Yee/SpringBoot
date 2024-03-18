@@ -10,12 +10,12 @@
 
     <button class="dropdown-btn" > Course Management <i class="fa fa-caret-down"></i></button>
     <div class="dropdown-container">
-        <a th:href="@{/course/courseRegistration}">Course Registration </a>
+        <a th:if="${session.role == 'ADMIN'}" th:href="@{/course/courseRegistration}">Course Registration </a>
         <a th:href="@{/course/courseList}">Course Details </a>
     </div>
 
 
-    <a th:href="@{/instructor/instructorReg}">Instructor Registration </a>
+    <a th:if="${session.role == 'ADMIN'}" th:href="@{/instructor/instructorReg}">Instructor Registration </a>
 
     <a th:href="@{/user/userList}">Users Management</a>
 

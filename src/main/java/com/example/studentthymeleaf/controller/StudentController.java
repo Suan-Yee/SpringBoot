@@ -10,11 +10,14 @@ import com.example.studentthymeleaf.service.impl.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -29,20 +32,30 @@ public class StudentController {
     private final StudentService studentService;
     private final CourseService courseService;
     private final EnrollService enrollService;
+    String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/upload";
 
     @GetMapping("/studentRegistration")
     public String registerForm(Model model){
+
         List<Course> courseList = courseService.selectByStatus("publish");
         StudentRegister st = new StudentRegister();
         model.addAttribute("student",st);
         model.addAttribute("courses",courseList);
-        log.info("Courses {}",courseList);
         return "student/student_reg";
     }
     @PostMapping("/studentRegistration")
-    public String registerForm(@ModelAttribute("student")StudentRegister form,Model model){
+    public String registerForm(@ModelAttribute("student")StudentRegister form, @RequestParam("file")MultipartFile file, Model model) throws IOException {
+
+        String image = savedImage(file);
+
         Student student = form.getStudent();
-        List<Long> courses = form.getSelectedCourses();
+        student.setImageFile(image);
+        List<Long> courses;
+        if(form.getSelectedCourses() != null){
+            courses = form.getSelectedCourses();
+        }else{
+            courses = Collections.EMPTY_LIST;
+        }
         studentService.saveStudent(student);
         return save(student, courses);
 
@@ -57,6 +70,7 @@ public class StudentController {
 
             Page<Student> studentPage = studentService.findActiveStudent(pageNumber);
             List<Student> studentList = studentPage.getContent();
+
             long totalElements = studentPage.getTotalElements();
             int totalPage = studentPage.getTotalPages();
             model.addAttribute("currentPage",pageNumber);
@@ -70,8 +84,6 @@ public class StudentController {
         Student student = studentService.findById(studentId);
 
         List<Long> courseList = enrollService.findByStudentId(studentId).stream().map(Course::getId).collect(Collectors.toList());
-
-        /*student.setCourseList();*/
         List<Course> courses = courseService.findAllCourse();
         StudentRegister st = new StudentRegister();
         student.setCourseList(courseList);
@@ -84,8 +96,13 @@ public class StudentController {
     }
     @PostMapping("updateStudent")
     public String updateStudent(@ModelAttribute("student")StudentRegister form,@RequestParam("student.id")Long hiddenId,
-                                @RequestParam("courses")List<Long> returnCourse,Model model){
+                                @RequestParam("courses")List<Long> returnCourse,
+                                @RequestParam("file")MultipartFile file,Model model) throws IOException {
+
+        String image = savedImage(file);
+
         Student result = form.getStudent();
+        result.setImageFile(image);
         form.setSelectedCourses(returnCourse);
         List<Long> courses;
         if(form.getSelectedCourses() == null){
@@ -93,6 +110,7 @@ public class StudentController {
         }else{
             courses = form.getSelectedCourses();
         }
+
         studentService.updateStudent(result);
         enrollService.deleteCourseAndStudent(hiddenId);
         return save(result, courses);
@@ -124,9 +142,13 @@ public class StudentController {
             model.addAttribute("totalElements",totalElements);
             model.addAttribute("students", searchResults);
         } else {
-            Page<Student> studentPage = studentService.findActiveStudent();
+            Page<Student> studentPage = studentService.findActiveStudent(1);
             List<Student> students = studentPage.getContent();
             model.addAttribute("students", students);
+            model.addAttribute("currentPage",1);
+            model.addAttribute("totalElements",studentPage.getTotalElements());
+            model.addAttribute("totalPages",studentPage.getTotalPages());
+
         }
         return "/student/student_details";
 
@@ -152,4 +174,15 @@ public class StudentController {
        model.addAttribute("courses",courseName);
        return "/student/details";
     }
+    private String savedImage(MultipartFile file) throws IOException {
+
+        String uniqueName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        StringBuilder fileNames = new StringBuilder();
+        Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY,uniqueName);
+        fileNames.append(uniqueName);
+        Files.write(fileNameAndPath,file.getBytes());
+
+        return uniqueName;
+    }
+
 }

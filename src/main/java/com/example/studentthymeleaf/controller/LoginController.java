@@ -42,15 +42,24 @@ public class LoginController {
     public String showWelcomePage(HttpSession httpSession) {
       var auth = SecurityContextHolder.getContext().getAuthentication();
       User user = userService.findByEmail(auth.getName());
+      log.info("User name {}",auth.getName());
       if(auth != null && auth.getAuthorities().stream().anyMatch(a ->
               a.getAuthority().equals(User.Role.USER.name()) ||
               a.getAuthority().equals(User.Role.ADMIN.name()))){
           httpSession.setAttribute("username",user.getUsername());
           httpSession.setAttribute("datetime", LocalDateTime.now().toLocalDate());
-          return "welcome";
+          httpSession.setAttribute("role",user.getRole().name());
+          log.info("User role {}",user.getRole().name());
+
+          httpSession.setAttribute("email",user.getEmail());
+          return "redirect:/welcome";
       }else{
           return "login";
       }
 
+    }
+    @GetMapping("/welcome")
+    public String welcome(){
+        return "welcome";
     }
 }

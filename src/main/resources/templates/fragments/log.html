@@ -3,13 +3,14 @@
     <div class="container">
         <div class="row">
             <div class="col-md-5 ">
-                <a href="MNU001.html"><h3>Student Registration</h3></a>
+                <a th:href="@{/welcome}"><h3>Student Registration</h3></a>
             </div>
             <div class="col-md-6">
                 <div sec:authentication="name"></div>
                 <!--<p th:text="${#authentication.principal.email}">UserName</p>-->
                <!-- <p th:text="${#dates.format(#dates.createNow(), 'yy.MM.dd')}">Current Date :</p>-->
-                <p>User Name: <span th:text="${#ctx.session.username}"></span></p>
+                <p>User Name: <span th:text="${#ctx.session.username}"></span>
+                    <span th:text="${#ctx.session.role}">=</span></p>
                 <p>Current Date: <span th:text="${#ctx.session.datetime}"></span></p>
             </div>
             <div class="col-md-1" >

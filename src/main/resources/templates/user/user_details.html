@@ -36,6 +36,31 @@
 
             </form>
 
+            <div style="color: darkgoldenrod; font-size: 16px;">Total Users: [[${totalElements}]]!  Page-> [[${currentPage}]] of [[${totalPages}]]</div>
+            <div style="display: flex; justify-content:space-around;">
+                <div></div>
+                <nav aria-label="Page navigation example" >
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item" th:disabled="${currentPage == 1}">
+                            <a th:if="${currentPage > 1}" th:href="@{'/user/userList/' + ${currentPage - 1}}" class="page-link" >Previous</a>
+                            <span th:unless="${currentPage > 1}" class="page-link" tabindex="-1">Previous</span>
+                        </li>
+                        <li class="page-item" th:if="${totalElements == 0}">
+                            <a href="#" class="page-link">No student</a>
+                        </li>
+                        <p th:if="${totalPages > 1}">
+            <span th:each="i: ${#numbers.sequence(1,totalPages)}">
+            <li class="page-item"><a th:href="@{'/user/userList/' + ${i}}" class="page-link">[[${i}]]</a></li>
+            </span>
+                        </p>
+                        <li class="page-item" th:disabled="${totalPages == currentPage}">
+                            <a th:if="${currentPage < totalPages}" th:href="@{'/user/userList/' + ${currentPage + 1}}"  class="page-link">Next</a>
+                            <span th:unless="${currentPage < totalPages}" class="page-link">Next</span>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
             <th:block th:if="${errors != null}">
                 <h5 style="color: red" th:text="${errors}"></h5>
             </th:block>
@@ -47,8 +72,8 @@
                     <th scope="col">User ID</th>
                     <th scope="col">User Name</th>
                     <th scope="col">Role</th>
-                    <th scope="col">Update</th>
-                    <th scope="col">Delete</th>
+                    <th  th:if="${session.role == 'ADMIN'}" scope="col">Update</th>
+                    <th  th:if="${session.role == 'ADMIN'}" scope="col">Delete</th>
                 </tr>
                 </thead>
 
@@ -60,15 +85,15 @@
                             <td th:text="${user.formattedId}"></td>
                             <td th:text="${user.username}"></td>
                             <td th:text="${user.role}"></td>
-                            <td>
-                                <a th:href="@{'updateUser?userId=' + ${user.id}}">
-                                    <button type="button" class="btn btn-success mb-3 me-3">
+                            <td th:if="${session.role == 'ADMIN'}">
+                                <button type="button" class="btn btn-success mb-3 me-3" th:disabled="${session.role == 'USER'}">
+                                    <a th:href="@{'updateUser?userId=' + ${user.id}}" style="color: white; text-decoration: none;">
                                         Update
-                                    </button>
-                                </a>
+                                    </a>
+                                </button>
                             </td>
-                            <td>
-                                <button type="button" class="btn btn-danger mb-3"
+                            <td  th:if="${session.role == 'ADMIN'}">
+                                <button th:disabled="${session.role == 'USER'}" type="button" class="btn btn-danger mb-3"
                                         data-bs-toggle="modal" data-bs-target="#exampleModal"
                                         th:attr="onclick='setStudentId(\'' + ${user.id} + '\')'">
                                     DELETE

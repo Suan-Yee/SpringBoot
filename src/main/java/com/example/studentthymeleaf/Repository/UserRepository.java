@@ -1,7 +1,8 @@
 package com.example.studentthymeleaf.Repository;
 
-import com.example.studentthymeleaf.entity.Course;
 import com.example.studentthymeleaf.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,10 +19,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<List<User>> findByUsername(String username);
     Optional<List<User>> findByIdOrUsername(Long userId,String username);
     Integer countByEmail(String email);
-    Optional<List<User>> findByIsDeleteFalse();
+    Optional<Page<User>> findByIsDeleteFalse(Pageable pageable);
 
     @Query("SELECT u FROM User  u WHERE (u.id = :id OR u.username = :name) AND u.isDelete = false")
-    Optional<List<User>> findActiveUserQuery(@Param("id") Long id, @Param("name") String name);
+    Optional<Page<User>> findActiveUserQuery(Long id, String name, Pageable pageable);
 
 
 }

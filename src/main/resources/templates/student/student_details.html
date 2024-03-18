@@ -37,9 +37,9 @@
       <th:block th:if="${errors != null}">
         <h5 style="color: red" th:text="${errors}"></h5>
       </th:block>
-      <form action="generateReport" method="post">
+      <!--<form action="generateReport" method="post">
         <button class="btn btn-danger mb-3" type="submit">Download Report(PDF)</button>
-      </form>
+      </form>-->
 
       <div style="color: darkgoldenrod; font-size: 16px;">Total Students: [[${totalElements}]]!  Page-> [[${currentPage}]] of [[${totalPages}]]</div>
       <div style="display: flex; justify-content:space-around;">
@@ -98,7 +98,7 @@
             </td>
 
             <td>
-              <button type="button" class="btn btn-danger mb-3"
+              <button type="button" class="btn btn-danger mb-3" th:disabled="${session.role == 'USER'}"
                       data-bs-toggle="modal" data-bs-target="#exampleModal"
                       th:attr="onclick='setStudentId(\'' + ${student.id} + '\')'">
                 DELETE

@@ -5,7 +5,9 @@ import com.example.studentthymeleaf.entity.AppUser;
 import com.example.studentthymeleaf.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,7 +41,8 @@ public class UserService implements UserDetailsService {
     }*/
 
     public User createUser(User user) {
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return savedUser;
     }
 
     public User findById(Long id) {
@@ -83,8 +86,9 @@ public class UserService implements UserDetailsService {
         return userList;
     }
 
-    public List<User> findByIdOrUserName(Long userId, String name) {
-        return userRepository.findActiveUserQuery(userId, name).orElse(Collections.EMPTY_LIST);
+    public Page<User> findByIdOrUserName(Long userId, String name,int page) {
+        Pageable pageable = PageRequest.of(page - 1,5);
+        return userRepository.findActiveUserQuery(userId,name,pageable).orElse(Page.empty());
     }
 
     public Integer isEmailUsed(String email) {
@@ -108,10 +112,19 @@ public class UserService implements UserDetailsService {
         }
         return false;
     }
-    public List<User> findActiveUser(){
-        return userRepository.findByIsDeleteFalse().orElse(Collections.EMPTY_LIST);
+    public boolean openAccount(Long userId){
+        User user = userRepository.findById(userId).orElse(null);
+        if(user != null){
+            user.setEnabled(true);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
-
+    public Page<User> findActiveUser(int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber - 1,5);
+        return userRepository.findByIsDeleteFalse(pageable).orElse(Page.empty());
+    }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
    /*return userRepository.findByEmail(email)

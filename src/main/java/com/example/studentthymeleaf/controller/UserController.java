@@ -2,9 +2,12 @@ package com.example.studentthymeleaf.controller;
 
 import com.example.studentthymeleaf.entity.User;
 import com.example.studentthymeleaf.helper.Validator;
+import com.example.studentthymeleaf.service.impl.EmailService;
 import com.example.studentthymeleaf.service.impl.UserService;
+import com.example.studentthymeleaf.service.impl.VerifyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +25,8 @@ public class UserController {
 
     private final UserService userService;
     private final BCryptPasswordEncoder encoder;
+    private final EmailService emailService;
+    private final VerifyService verifyService;
 
     @GetMapping("/register")
     public String showForm(Model model) {
@@ -52,18 +58,43 @@ public class UserController {
         User log_user = (User) session.getAttribute("valid_user");*/
         String encodePassword = encoder.encode(user.getPassword());
         user.setPassword(encodePassword);
-        log.info("User {}",user.toString());
         if (user.role == null) {
             user.setRole(User.Role.USER);
         }
-        userService.createUser(user);
-        return "redirect:/user/userList";
+        user.setEnabled(false);
+        User savedUser = userService.createUser(user);
+        String token = UUID.randomUUID().toString();
+        verifyService.createUrl(token,savedUser);
+        emailService.sendHtmlEmail(user.getUsername(),savedUser.getEmail(),token);
+        return "user/emailsend";
+    }
+    @GetMapping("/confirmAccount")
+    public String confirmAccount(@RequestParam("token") String url, Model model) {
+        User user = verifyService.getUserByVerificationUrl(url);
+        if (user == null) {
+            model.addAttribute("error", "Invalid token");
+            return "user/errorPage";
+        }
+        userService.openAccount(user.getId());
+
+        model.addAttribute("message", "Your account has been verified successfully. You can now login.");
+        return "user/verifyAccount";
     }
 
     @GetMapping("/userList")
     public String userList(Model model) {
-        List<User> userList = userService.findActiveUser();
-        log.info("UserList {}", userList);
+       return userPage(1,model);
+    }
+    @GetMapping("/userList/{page}")
+    public String userPage(@PathVariable("page")int pageNumber,Model model){
+        Page<User> pageResult = userService.findActiveUser(pageNumber);
+        List<User> userList = pageResult.getContent();
+
+        long totalElements = pageResult.getTotalElements();
+        int totalPage = pageResult.getTotalPages();
+        model.addAttribute("currentPage",pageNumber);
+        model.addAttribute("totalPages",totalPage);
+        model.addAttribute("totalElements",totalElements);
         model.addAttribute("users", userList);
         return "/user/user_details";
     }
@@ -93,16 +124,22 @@ public class UserController {
                            @RequestParam(name = "name", required = false) String userName,
                            Model model) {
 
-        List<User> searchResults;
+        Page<User> pageUser;
         if (userId != null || (userName != null && !userName.isEmpty())) {
 
-            searchResults = userService.findByIdOrUserName(userId, userName);
+            pageUser = userService.findByIdOrUserName(userId, userName,1);
+            List<User> searchResults = pageUser.getContent();
             if (searchResults.isEmpty()) {
                 model.addAttribute("errors", "There is no user found");
             }
             model.addAttribute("users", searchResults);
+            model.addAttribute("currentPage",1);
+            model.addAttribute("totalPages",pageUser.getTotalPages());
+            model.addAttribute("totalElements",pageUser.getTotalElements());
+            model.addAttribute("students", searchResults);
         } else {
-            List<User> users = userService.findActiveUser();
+            Page<User> userPage = userService.findActiveUser(1);
+            List<User> users = userPage.getContent();
             model.addAttribute("users", users);
         }
         return "/user/user_details";
@@ -134,4 +171,7 @@ public class UserController {
 
         return null;
     }
+    /*public static String getVerificationUrl(String token) {
+        return "localhost:8080/user/confirmAccount?token=" + token;
+    }*/
 }

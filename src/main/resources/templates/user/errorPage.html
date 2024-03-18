@@ -1,0 +1,23 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <div th:replace="fragments/header :: header"></div>
+</head>
+<body>
+<div class="hello">
+    <h2>[[${error}]]</h2>
+</div>
+<a th:href="@{/}" type="button" class="btn primary mb-3">
+    Register
+</a>
+</body>
+<style>
+    .hello{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #4CAF50;
+        background-color: #424242;
+    }
+</style>
+</html>

@@ -48,9 +48,9 @@
                     <th scope="col"> Name</th>
                     <th scope="col">Description</th>
                     <th scope="col">Instructor</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Update</th>
-                    <th scope="col">Delete</th>
+                    <th th:if="${session.role == 'ADMIN'}" scope="col">Status</th>
+                    <th th:if="${session.role == 'ADMIN'}" scope="col">Update</th>
+                    <th th:if="${session.role == 'ADMIN'}" scope="col">Delete</th>
                 </tr>
                 </thead>
 
@@ -59,17 +59,17 @@
                     <th:block th:each="course, iterStat : ${courses}">
                 <tr>
                 <td th:text="${iterStat.count}"></td>
-                <td th:text="${course.id}"></td>
+                <td th:text="${course.formattedId}"></td>
                 <td th:text="${course.name}"></td>
                 <td th:text="${course.description}"></td>
                 <td th:text="${course.instructor}"></td>
-                <td>
+                <td th:if="${session.role == 'ADMIN'}">
                     <a th:href="@{'/course/changeStatus?courseId=' + ${course.id}}">
                         <span th:class="${course.status != null && course.status.equalsIgnoreCase('pending')} ? 'badge text-bg-warning' : 'badge text-bg-info'" th:text="${course.status}"></span>
                     </a>
                 </td>
-                <td><a th:href="@{'/course/updateCourse?courseId=' + ${course.id}}" class="btn btn-warning">Update</a></td>
-                <td><a th:href="@{'/course/deleteCourse?courseId=' + ${course.id}}"><i class="fa-solid fa-trash"></i></a></td>
+                <td th:if="${session.role == 'ADMIN'}"><a th:href="@{'/course/updateCourse?courseId=' + ${course.id}}" class="btn btn-warning">Update</a></td>
+                <td th:if="${session.role == 'ADMIN'}"><a th:href="@{'/course/deleteCourse?courseId=' + ${course.id}}"><i class="fa-solid fa-trash"></i></a></td>
             </tr>
                     </th:block>
                 </th:block>

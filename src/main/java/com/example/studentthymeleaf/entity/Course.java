@@ -21,6 +21,7 @@ public class Course {
     private String status;
     @Column(columnDefinition = "TINYINT")
     private Boolean enabled;
+    private String formattedId;
 
     @OneToMany(mappedBy = "course")
     private Set<Enroll> studentCourse = new HashSet<>();
@@ -28,6 +29,11 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
+
+    @PostLoad
+    public void formatId() {
+        this.formattedId = String.format("CSR%03d", this.id);
+    }
 
     @PrePersist
     public void prePersist() {

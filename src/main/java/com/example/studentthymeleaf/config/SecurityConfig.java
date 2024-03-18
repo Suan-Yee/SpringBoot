@@ -58,11 +58,10 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.formLogin(log -> log.loginPage("/login").usernameParameter("email").loginProcessingUrl("/signIn").defaultSuccessUrl("/"));
-
         http.logout(logout ->  logout.invalidateHttpSession(true).clearAuthentication(true).logoutUrl("/logout").logoutSuccessUrl("/"));
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/static/**", "/user/register/**").permitAll()
+                .requestMatchers("/","/login", "/static/**", "/user/register/**").permitAll()
                 .requestMatchers("/user/**").hasAnyAuthority(User.Role.USER.name(), User.Role.ADMIN.name())
                 .requestMatchers("/admin/**").hasAnyAuthority(User.Role.ADMIN.name())
                 .anyRequest().authenticated());

@@ -25,6 +25,7 @@
                                             <img src="/images/cute.jpg" alt="Profile Image" class="img-radius profile-image" alt="User-Profile-Image">
                                         </c:otherwise>
                                     </c:choose>-->
+                                    <img th:src="${student.getPhotosImagePath}" class="img-radius profile-image" alt="User-Profile-Image"/>
                                 </div>
 
                                 <h6 class="f-w-600">[[${student.name}]]</h6>
